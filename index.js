@@ -24,6 +24,32 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get('/api/:date?', (req, res) => {
+    const dateParam = req.params.date;
+
+
+    if (!dateParam) {
+      // Si aucune parametre date n'est fournie, renvoyer l'horodatage Unix actuel
+      const now = new Date();
+      res.json({ unix: now.getTime(), utc: now.toUTCString() });
+      return;
+  }
+ // Tenter de créer un objet Date à partir du paramètre
+ let date;
+ if (!isNaN(dateParam)) {
+     // Si le paramètre est un nombre, considérer qu'il s'agit d'un horodatage Unix en millisecondes
+     date = new Date(parseInt(dateParam));
+ } else {
+     date = new Date(dateParam);
+ }
+ // Vérifier si la date est valide
+ if (isNaN(date.getTime())) {
+  res.json({ error: 'Invalid Date' });
+} else {
+  res.json({ unix: date.getTime(), utc: date.toUTCString() });
+}
+})
+
 
 
 // Listen on port set in environment variable or default to 3000
